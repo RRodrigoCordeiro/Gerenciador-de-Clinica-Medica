@@ -26,9 +26,10 @@ const PacientesList = () => {
 
   },[])
 
-  const abrirModal = () => {
+  const abrirModal = (paciente) => {
+    setPacienteSelecionado(paciente)
     setModalaberto(true)
-    setPacienteSelecionado(null)
+    
 
   }
 
@@ -38,7 +39,6 @@ const PacientesList = () => {
   }
 
   const removerPaciente = () => {
-
     axios.delete(`/pacientes/${pacienteSelecionado.id}`)
     .then(() => {
       setPacientes(prevPacientes => prevPacientes.filter(paciente => paciente.id !== pacienteSelecionado.id))
@@ -108,8 +108,8 @@ const PacientesList = () => {
           </p>
         </div>
         <div className="modalButtons">
-          <button onClick={fecharModal}>Cancelar</button>
-          <button onClick={removerPaciente}>Excluir</button>
+          <button onClick={fecharModal} className="btn btn-secondary">Cancelar</button>
+          <button onClick={removerPaciente}  className="btn btn-danger">Excluir</button>
 
         </div>
 
