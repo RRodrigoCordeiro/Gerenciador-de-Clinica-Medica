@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaPlus, FaEdit} from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaExclamationTriangle} from "react-icons/fa";
 import axios from '../../api';
+import Modal from 'react-modal'
 
 
 const PacientesList = () => {
 
   const [pacientes, setPacientes] = useState([])
+  const [modalAberto, setModalaberto] = useState(false)
+  const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
 
 
   useEffect(() => {
@@ -22,6 +25,27 @@ const PacientesList = () => {
     buscarPaciente()
 
   },[])
+
+  const abrirModal = () => {
+    setModalaberto(true)
+    setPacienteSelecionado(null)
+
+  }
+
+  const fecharModal = () => {
+    setModalaberto(false)
+    setPacienteSelecionado(null)
+  }
+
+  const removerPaciente = () => {
+
+    axios.delete(`/pacientes/${pacienteSelecionado.id}`)
+    .then(() => {
+      setPacientes(prevPacientes => prevPacientes.filter(paciente => paciente.id !== pacienteSelecionado.id))
+      fecharModal()
+    
+    }) 
+  }
 
 
   return (
@@ -43,6 +67,7 @@ const PacientesList = () => {
             <th>CPF:</th>
             <th>RG:</th>
             <th>Plano de Saúde:</th>
+            <th>Ações:</th>
           </tr>
         </thead>
         <tbody>
@@ -55,16 +80,40 @@ const PacientesList = () => {
               <td>{paciente.cpf}</td>
               <td>{paciente.rg}</td>
               <td>{paciente.planoDeSaude}</td>
+        
               <td>
                 <Link to={`edit-paciente/${paciente.id}`} className="btn btn-sm btn-warning">
                     <FaEdit  className="icon icon-btn" /> Editar
                 </Link>
+                <button onClick={() => abrirModal(paciente)} className="btn btn-sm btn-danger">
+                    <FaTrash className="icon icon-btn"/>Excluir
+                </button>
               </td>
             </tr>
           ))
           }
         </tbody>
       </table>
+      <Modal
+        isOpen={modalAberto}
+        onRequestClose={fecharModal}
+        className="modal"
+        overlayClassName="overlay" 
+      >
+        <div className="modalContent">
+          <FaExclamationTriangle  className="icon"/>
+          <h2>Confirmar Exclusão</h2>
+          <p>Tem certeza que deseja excluir
+              {pacienteSelecionado && pacienteSelecionado.nome}?
+          </p>
+        </div>
+        <div className="modalButtons">
+          <button onClick={fecharModal}>Cancelar</button>
+          <button onClick={removerPaciente}>Excluir</button>
+
+        </div>
+
+      </Modal>
     </div>
   );
 };
