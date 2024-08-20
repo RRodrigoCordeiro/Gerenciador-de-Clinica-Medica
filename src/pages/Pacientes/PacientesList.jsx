@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaPlus, FaEdit, FaTrash, FaExclamationTriangle} from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaExclamationTriangle, FaQuestionCircle} from "react-icons/fa";
 import axios from '../../api';
 import Modal from 'react-modal'
 
@@ -10,6 +10,7 @@ const PacientesList = () => {
   const [pacientes, setPacientes] = useState([])
   const [modalAberto, setModalaberto] = useState(false)
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
+  const [tooltipAberto, setTooltipAberto] = useState(false)
 
 
   useEffect(() => {
@@ -47,11 +48,26 @@ const PacientesList = () => {
     }) 
   }
 
+  const toggleTooltip = () => {
+    setTooltipAberto(!tooltipAberto)
+  }
+
 
   return (
     <div className="container mt-5">
       <h2 className="mb-4" style={{ position: "relative" }}>
         Lista de Pacientes
+        <FaQuestionCircle className="tooltip-icon" onClick={toggleTooltip} />
+        {
+          tooltipAberto && (
+            <div className="tooltip">
+                Aqui você pode ver, editar ou excluir pacientes cadastrados no sistema.
+
+            </div>
+          )
+        }
+
+
       </h2>
 
       <Link to="/add-pacientes" className="btn btn-primary mb-2">
