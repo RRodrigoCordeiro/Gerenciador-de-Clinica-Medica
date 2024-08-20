@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { FaPlus, FaEdit, FaTrash, FaExclamationTriangle, FaQuestionCircle} from "react-icons/fa";
+import { FaPlus, FaEdit, FaTrash, FaExclamationTriangle, FaQuestionCircle, FaCheckCircle} from "react-icons/fa";
 import axios from '../../api';
 import Modal from 'react-modal'
 
@@ -11,6 +11,7 @@ const PacientesList = () => {
   const [modalAberto, setModalaberto] = useState(false)
   const [pacienteSelecionado, setPacienteSelecionado] = useState(null)
   const [tooltipAberto, setTooltipAberto] = useState(false)
+  const [modalConcluido, setModalConcluido] = useState(false)
 
 
   useEffect(() => {
@@ -39,11 +40,17 @@ const PacientesList = () => {
     setPacienteSelecionado(null)
   }
 
+  const abrirModalConcluido = () => {
+    setModalConcluido(true)
+    setTimeout(()=> setModalConcluido(false),2000)
+  }
+  
   const removerPaciente = () => {
     axios.delete(`/pacientes/${pacienteSelecionado.id}`)
     .then(() => {
       setPacientes(prevPacientes => prevPacientes.filter(paciente => paciente.id !== pacienteSelecionado.id))
       fecharModal()
+      abrirModalConcluido()
     
     }) 
   }
@@ -51,6 +58,8 @@ const PacientesList = () => {
   const toggleTooltip = () => {
     setTooltipAberto(!tooltipAberto)
   }
+
+ 
 
 
   return (
@@ -128,6 +137,20 @@ const PacientesList = () => {
           <button onClick={removerPaciente}  className="btn btn-danger">Excluir</button>
 
         </div>
+
+      </Modal>
+      <Modal
+        isOpen={modalConcluido}
+        onRequestClose={() => setModalConcluido(false)}
+        className="modal"
+        overlayClassName="overlay"
+      >
+        <div className="modalContent">
+          <FaCheckCircle className="icon sucessIcon"/>
+          <h2>Paciente excuido com sucesso!</h2> 
+
+        </div>
+
 
       </Modal>
     </div>
